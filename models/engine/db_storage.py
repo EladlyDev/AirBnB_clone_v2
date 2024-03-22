@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 """This module defines a class to manage db storage for hbnb clone"""
 from sqlalchemy import create_engine, MetaData, select
 import sqlalchemy.orm as orm
@@ -41,11 +42,11 @@ class DBStorage:
         # If cls argument is given, query that only else query all of them
         if cls:
             for model in models:
-                if model.__name__ == cls:
+                if model.__name__ == cls.__name__:
                     cls_model = model
                     break
-                if cls_model:
-                    models = [cls_model]
+            if cls_model:
+                models = [cls_model]
         out = {}  # The dictionary to be returned
         results = []  # The results to be compiled from db queries
 
@@ -53,15 +54,15 @@ class DBStorage:
             results += self.__session.query(m).all()
 
         for inst in results:
-            obj = inst.to_dict()
-            obj["created_at"] = repr(inst.created_at)
-            obj["updated_at"] = repr(inst.updated_at)
+            # obj = inst.to_dict()
+            # obj["created_at"] = repr(inst.created_at)
+            # obj["updated_at"] = repr(inst.updated_at)
             key = inst.__class__.__name__
-            val = f"[{key}] ({inst.id}) "
-            if "__class__" in obj:
-                del obj["__class__"]
-            val += str(obj)
-            out[key+"."+inst.id] = val
+            # val = f"[{key}] ({inst.id}) "
+            # if "__class__" in obj:
+            #     del obj["__class__"]
+            # val += str(obj)
+            out[key+"."+inst.id] = inst
         # User, State, City, Amenity, Place and Review
         return out
 
@@ -94,7 +95,6 @@ class DBStorage:
         # for model in [BaseModel, User, Place, State, City, Amenity, Review]:
         # self.new(model)
 
-        """create all tables in the database"""
         Base.metadata.create_all(self.__engine)
         factory = orm.sessionmaker(bind=self.__engine)
         Session = orm.scoped_session(factory)
