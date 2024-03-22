@@ -99,3 +99,7 @@ class DBStorage:
         factory = orm.sessionmaker(bind=self.__engine)
         Session = orm.scoped_session(factory)
         self.__session = Session(bind=self.__engine, expire_on_commit=False)
+
+    def close(self):
+        """ closes the self.__session which stops all the transactions """
+        self.__session.close()

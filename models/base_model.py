@@ -3,30 +3,36 @@
 import uuid
 from datetime import datetime
 from sqlalchemy.orm import declarative_base
-from sqlalchemy import Column, String, DateTime
+from sqlalchemy import Column, String, DATETIME
+from os import getenv
 
 Base = declarative_base()
 
 
 class BaseModel:
     """A base class for all hbnb models"""
-    id = Column(String(60), nullable=False, primary_key=True)
-    created_at = Column(DateTime(datetime.utcnow()), nullable=False)
-    updated_at = Column(DateTime(datetime.utcnow()), nullable=False)
+    __table_args__ = {'mysql_engine': 'InnoDB', 'mysql_charset': 'latin1'}
+    id = Column(String(60), primary_key=True)
+    created_at = Column(DATETIME, default=datetime.utcnow, nullable=False)
+    updated_at = Column(DATETIME, default=datetime.utcnow, nullable=False)
 
     def __init__(self, *args, **kwargs):
         """Instatntiates a new model"""
-        if not kwargs:
-            from models import storage
-            self.id = str(uuid.uuid4())
-            self.created_at = datetime.now()
-            self.updated_at = datetime.now()
-        else:
-            kwargs['updated_at'] = datetime.strptime(kwargs['updated_at'],
-                                                     '%Y-%m-%dT%H:%M:%S.%f')
-            kwargs['created_at'] = datetime.strptime(kwargs['created_at'],
-                                                     '%Y-%m-%dT%H:%M:%S.%f')
-            del kwargs['__class__']
+        self.id = str(uuid.uuid4())
+        self.created_at = datetime.now()
+        self.updated_at = datetime.now()
+
+        if kwargs:
+            tf = '%Y-%m-%dT%H:%M:%S.%f'
+            if 'updated_at' in kwargs:
+                kwargs['updated_at'] = datetime.strptime(kwargs['updated_at'],
+                                                         tf)
+            if 'created_at' in kwargs:
+                kwargs['created_at'] = datetime.strptime(kwargs['created_at'],
+                                                         tf)
+            if '__class__' in kwargs:
+                del kwargs['__class__']
+
             for prop in kwargs:
                 setattr(self, prop, kwargs[prop])
             self.__dict__.update(kwargs)
@@ -34,7 +40,10 @@ class BaseModel:
     def __str__(self):
         """Returns a string representation of the instance"""
         cls = (str(type(self)).split('.')[-1]).split('\'')[0]
-        return '[{}] ({}) {}'.format(cls, self.id, self.__dict__)
+        out = dict(self.__dict__)
+        if '_sa_instance_state' in out:
+            del out['_sa_instance_state']
+        return '[{}] ({}) {}'.format(cls, self.id, out)
 
     def save(self):
         """Updates updated_at with current time when instance is changed"""
