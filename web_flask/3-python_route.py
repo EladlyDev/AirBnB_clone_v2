@@ -18,14 +18,19 @@ def hbnb():
     return "HBNB"
 
 
-@app.route("/<string:lang>/<string:text>", strict_slashes=False)
-def c_n_python(text, lang):
-    """ the c is fun and Python is cool page"""
-    if lang.lower() in ['python', 'c']:
-        text = text.replace('_', ' ')
-        lang = lang.capitalize()
-        return f"{escape(lang)} {escape(text)}"
-    abort(404)
+@app.route("/c/<string:text>", strict_slashes=False)
+def c_is_fun(text):
+    """ the c is fun page """
+    text = text.replace('_', ' ')
+    return f"C {escape(text)}"
+
+
+@app.route("/python", strict_slashes=False)
+@app.route("/python/<text>", strict_slashes=False)
+def python(text="is cool"):
+    """python route"""
+    text = text.replace("_", " ")
+    return f"Python {escape(text)}"
 
 
 if __name__ == "__main__":
