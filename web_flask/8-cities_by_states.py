@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-""" 7-states_list module 1 route renders a template with dynamic content """
+""" starts a Flask web application the contains the route /cities_by_states """
 from flask import Flask, render_template
 from models.state import State
 from models import storage
@@ -19,14 +19,11 @@ def teardown_appcontext(exception):
     storage.close()
 
 
-@app.route("/states_list", strict_slashes=False)
-def states_list():
-    """
-        the states_list route that
-        renders all states from storage
-    """
+@app.route("/cities_by_states", strict_slashes=False)
+def cities_by_states():
+    """ show states and cities belongs to each state"""
     states = [state for k, state in storage.all(State).items()]
-    return render_template('7-states_list.html', states=states)
+    return render_template('8-cities_by_states.html', states=states)
 
 
 if __name__ == "__main__":
