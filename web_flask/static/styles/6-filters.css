@@ -25,7 +25,7 @@
 	float: left;
     width: 25%;
 
-	line-height: 20px;
+    line-height: 20px;
 }
 
 .popover {
@@ -42,14 +42,17 @@
 	border-radius: 4px;
 	max-height: 300px;
 	overflow: auto;
+
+	position: relative;
+	z-index: 9;
 }
 
 .locations:hover .popover {
-	display: inline-block;
+    display: inline-block;
 }
 
 .amenities:hover .popover {
-	display: inline-block;
+    display: inline-block;
 }
 
 ul {

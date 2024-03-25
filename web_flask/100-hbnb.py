@@ -3,6 +3,8 @@
 from flask import Flask, render_template
 from models.state import State
 from models.amenity import Amenity
+from models.place import Place
+from models.user import User
 from models import storage
 
 app = Flask(__name__)
@@ -14,13 +16,16 @@ def teardown_appcontext(exception):
     storage.close()
 
 
-@app.route("/hbnb_filters", strict_slashes=False)
-def hbnb_filters():
-    """ shows the hbnb filters, from db to the view! """
+@app.route("/hbnb", strict_slashes=False)
+def hbnb():
+    """ shows the hbnb website, from db to the view! """
     states = storage.all(State).values()
     amenities = storage.all(Amenity).values()
-    return render_template('10-hbnb_filters.html', states=states,
-                           amenities=amenities)
+    places = storage.all(Place).values()
+    users = storage.all(User).values()
+    return render_template('100-hbnb.html', states=states,
+                           amenities=amenities, places=places,
+                           users=users)
 
 
 if __name__ == "__main__":
