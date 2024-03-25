@@ -12,7 +12,7 @@ class FileStorage:
         """Returns a dictionary of models currently in storage"""
         if not cls:
             return FileStorage.__objects
-        req = cls.__name__
+        req = getattr(cls, '__class__')
         out = {}
 
         for key in FileStorage.__objects:
